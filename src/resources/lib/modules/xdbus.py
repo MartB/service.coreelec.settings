@@ -7,11 +7,6 @@
 import dbus
 import dbus.service
 import threading
-import pgi
-pgi.install_as_gi()
-from gi.repository import GLib
-from dbus.mainloop.glib import DBusGMainLoop
-
 
 class xdbus:
 
@@ -67,9 +62,6 @@ class dbusMonitor(threading.Thread):
             self.monitors = []
             self.oe = oeMain
             self.dbusSystemBus = oeMain.dbusSystemBus
-            dbus.mainloop.glib.threads_init()
-            DBusGMainLoop(set_as_default=True)
-            self.mainLoop = GLib.MainLoop()
             threading.Thread.__init__(self)
             self.oe.dbg_log('xdbus::dbusMonitor::__init__', 'exit_function', self.oe.LOGDEBUG)
         except Exception as e:
@@ -91,7 +83,6 @@ class dbusMonitor(threading.Thread):
                     self.monitors.append(monitor)
             try:
                 self.oe.dbg_log('xdbus Monitor started.', '', self.oe.LOGINFO)
-                self.mainLoop.run()
                 self.oe.dbg_log('xdbus Monitor stopped.', '', self.oe.LOGINFO)
             except:
                 pass
@@ -102,7 +93,6 @@ class dbusMonitor(threading.Thread):
     def stop(self):
         try:
             self.oe.dbg_log('xdbus::dbusMonitor::stop_service', 'enter_function', self.oe.LOGDEBUG)
-            self.mainLoop.quit()
             for monitor in self.monitors:
                 monitor.remove_signal_receivers()
                 monitor = None
